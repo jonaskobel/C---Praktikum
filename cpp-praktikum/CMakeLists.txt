@@ -44,3 +44,8 @@ add_executable(tag01_speicher_und_arrays
 add_executable(tag01_bubble_sort
     tag01/bubble_sort/bubble_sort.cpp
 )
+
+add_executable(tag02_flaschen
+    tag02/flaschen/flaschen.cpp 
+    tag02/flaschen/main.cpp
+)
