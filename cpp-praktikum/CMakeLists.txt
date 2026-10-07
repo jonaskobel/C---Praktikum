@@ -32,3 +32,15 @@ add_executable(tag01_buchstaben_und_woerter
 add_executable(tag01_quadratische_funktionen
     tag01/quadratische_funktionen/quadratische_funktionen.cpp 
 )
+
+add_executable(tag01_referenzen
+    tag01/referenzen/referenzen.cpp
+)
+
+add_executable(tag01_speicher_und_arrays
+    tag01/speicher_und_arrays/speicher_und_arrays.cpp
+)
+
+add_executable(tag01_bubble_sort
+    tag01/bubble_sort/bubble_sort.cpp
+)
