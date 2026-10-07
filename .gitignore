@@ -1,0 +1,78 @@
+# Build-Verzeichnisse (auch in Unterordnern)
+build/
+build-*/
+cmake-build-*/
+out/
+
+# Von CMake / Ninja generierte Dateien
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+install_manifest.txt
+compile_commands.json
+build.ninja
+rules.ninja
+.ninja_deps
+.ninja_log
+Testing/
+_deps/
+CMakeUserPresets.json
+
+# Kompilierte Objekte, Bibliotheken und Programme
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app/
+*.gch
+*.pch
+
+# Programme ohne Dateiendung aus dem VS-Code-Build-Task
+# Bei neuen Uebungen ggf. den Namen der ausfuehrbaren Datei ergaenzen.
+main
+**/taschenrechner/taschenrechner
+**/maya_numbers/maya_numbers
+**/verfahren_von_heron/verfahren_von_heron
+**/palindrome/palindrome
+**/buchstaben_und_woerter/buchstaben_und_woerter
+**/quadratische_funktionen/quadratische_funktionen
+tag01_*
+
+# Debug-, Profiling- und Coverage-Dateien
+*.dSYM/
+*.pdb
+*.ilk
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+gmon.out
+
+# Lokale Editor-Einstellungen und Caches
+# Gemeinsame VS-Code-Dateien wie tasks.json und launch.json bleiben erhalten.
+.vscode/settings.json
+.vscode/ipch/
+.cache/
+.clangd/
+.idea/
+*.swp
+*.swo
+*~
+
+# Betriebssystemdateien
+.DS_Store
+._*
+.Spotlight-V100/
+.Trashes/
+Thumbs.db
+Desktop.ini

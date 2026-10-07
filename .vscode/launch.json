@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Maya Numbers debuggen",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp-praktikum/build/tag01_palindrome",
+            "args": [],
+            "stopOnEntry": false,
+            "cwd": "${workspaceFolder}/cpp-praktikum",
+            "terminal": "integrated",
+            "preLaunchTask": "CMake: Maya Numbers bauen"
+        }
+    ]
+}
