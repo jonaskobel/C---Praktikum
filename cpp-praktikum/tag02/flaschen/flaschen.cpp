@@ -7,6 +7,7 @@ Flasche::Flasche()
     dVolume = 0.0; 
     sMaterial = "unkown"; 
 }
+
 double Flasche::getdVolume() const
 {
     return dVolume; 
@@ -38,3 +39,7 @@ void Flasche::adoptFlasche(const Flasche& other)
     dVolume = other.getdVolume(); 
     sMaterial = other.getsMaterial(); 
 }
+
+// int Date::compare(Date dd)        // Übergibt eine Kopie
+// int Date::compare(Date& dd)       // Übergibt eine Referenz auf das Original
+// int Date::compare(const Date& dd) // Referenz, über die dd nicht verändert werden darf

@@ -49,3 +49,28 @@ add_executable(tag02_flaschen
     tag02/flaschen/flaschen.cpp 
     tag02/flaschen/main.cpp
 )
+
+add_executable(tag02_datum
+    tag02/datum/datum.cpp 
+    tag02/datum/main.cpp
+)
+
+add_executable(tag02_fahrzeuge
+    tag02/fahrzeuge/main.cpp 
+    tag02/fahrzeuge/vehicle.cpp
+)
+
+add_executable(tag02_quadrate
+    tag02/quadrate/main.cpp 
+    tag02/quadrate/squares.cpp
+)
+
+add_executable(tag02_vererbung
+    tag02/vererbung_und_ueberschreibung/main.cpp 
+    tag02/vererbung_und_ueberschreibung/vererbung_und_ueberschreiben.cpp
+)
+
+add_executable(tag02_virtuelle_methoden
+    tag02/virtuelle_methode/vererbung_und_ueberschreiben.cpp 
+    tag02/virtuelle_methode/main.cpp 
+)   
