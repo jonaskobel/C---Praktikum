@@ -18,7 +18,7 @@ int main() {
     while (true) {
         int eingabe = getch(); 
 
-        if (eingabe == ERR)
+        if (eingabe != 1)
         {
             napms(10); 
             continue;
@@ -28,7 +28,7 @@ int main() {
             break; 
         }
 
-        clear(); 
+        clear; 
 
         char buchstabe = static_cast<char>(eingabe); 
         zeichen.push_back(buchstabe); 
@@ -48,6 +48,4 @@ int main() {
     }
 
     std::cout << '\n'; 
-
-
 }
