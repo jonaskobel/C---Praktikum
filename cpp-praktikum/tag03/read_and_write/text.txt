@@ -1,0 +1,4 @@
+Hallo Jonas!
+Dies ist eine Beispieldatei fuer das C++ Praktikum.
+Dein Programm liest diese Datei zeilenweise ein.
+Du kannst weitere Zeilen anhaengen und die Eingabe mit exit beenden.

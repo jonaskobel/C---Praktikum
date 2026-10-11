@@ -74,3 +74,29 @@ add_executable(tag02_virtuelle_methoden
     tag02/virtuelle_methode/vererbung_und_ueberschreiben.cpp 
     tag02/virtuelle_methode/main.cpp 
 )   
+
+add_executable(tag03_rekursion
+    tag03/Rekursion/main.cpp
+)
+
+add_executable(tag03_fibonacci
+    tag03/fibonacci/main.cpp
+)
+
+add_executable(tag03_read_and_write
+    tag03/read_and_write/main.cpp
+)
+
+add_executable(tag03_exceptions
+    tag03/Ausnahmen/main.cpp
+)
+
+add_executable(tag03_list
+    tag03/list/main.cpp
+)
+
+add_executable(tag03_ncurses
+    tag03/ncurses/main.cpp 
+)
+
+target_link_libraries(tag03_ncurses PRIVATE ncurses)
