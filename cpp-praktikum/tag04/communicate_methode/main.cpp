@@ -5,5 +5,4 @@ int main()
     KeyboardControl control; 
 
     control.Communicate(); 
-    control.Step(); 
 }

@@ -100,3 +100,14 @@ add_executable(tag03_ncurses
 )
 
 target_link_libraries(tag03_ncurses PRIVATE ncurses)
+
+
+add_executable(tag04_keyboard_control
+    tag04/keyboard_control/main.cpp
+    tag04/keyboard_control/keyboard_control.cpp
+)
+add_executable(tag04_communicate_methode
+    tag04/communicate_methode/main.cpp
+    tag04/communicate_methode/keyboard_control.cpp
+)
+target_link_libraries(tag04_communicate_methode PRIVATE ncurses)
