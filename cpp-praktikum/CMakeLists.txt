@@ -77,6 +77,7 @@ add_executable(tag02_virtuelle_methoden
 
 add_executable(tag02_polymorphie
     tag02/polymorphie/main.cpp
+    tag02/polymorphie/polymorphie.cpp
 )
 
 add_executable(tag03_rekursion
