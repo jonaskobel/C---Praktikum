@@ -1,120 +1,93 @@
 #include "keyboard_control.h"
-#include <iostream>
 #include <ncurses.h>
-#include <array>
 
 KeyboardControl::KeyboardControl()
 {
-    sollgeschwindigkeit = {0.0, 0.0}; 
-    istgeschwindigkeit = {0.0, 0.0}; 
+    for (int i = 0; i < 2; i++)
+    {
+        sollgeschwindigkeit[i] = 0.0;
+        istgeschwindigkeit[i] = 0.0;
+    }
 }
 
 void KeyboardControl::Communicate()
 {
+    initscr();              // ncurses starten.
+    cbreak();               // Tasten direkt lesen, ohne Enter.
+    noecho();               // Eingaben nicht automatisch anzeigen.
+    nodelay(stdscr, true);   // getch wartet nicht auf einen Tastendruck.
 
-    initscr(); 
-    cbreak(); 
-    noecho(); 
-    nodelay(stdscr, true); 
+    bool beenden = false;
+    int letzteTaste = '-';
 
-    printw("w/s: vor/zurueck | a/d: lenken | b: Stopp | q: Ende\n"); 
-    refresh(); 
-
-    bool beenden = false; 
-    int letzte_taste = '-'; 
-
-    while (!beenden) {
-
-        // getch liest einen Tastendruck, da davor nodelay(stdscr, true) gesetzt ist wartet die Funtkion nicht
-        int eingabe = getch(); 
-
-        // Taste gedrückt -> getch() liefert einen Tastencode 
-        // Taste nicht gerückt -> liefert ERR 
-        if (eingabe != ERR)
+    // Erste Schleife: Eingaben verarbeiten und Sollwerte einstellen.
+    while (!beenden)
+    {
+        int taste = getch();
+        if (taste != ERR) // ERR bedeutet: Es wurde keine Taste gedrueckt.
         {
-            letzte_taste = eingabe; 
-
-            switch (eingabe)
+            letzteTaste = taste;
+            switch (taste)
             {
-                // erhöhe die Vorwärtsgeschwindigkeit um 0.01
                 case 'w':
-                    sollgeschwindigkeit[0] += 0.01; // rechter motor
-                    sollgeschwindigkeit[1] += 0.01; // linker motor
-                    break; 
-
-                case 's': 
-                    sollgeschwindigkeit[0] -= 0.01; 
-                    sollgeschwindigkeit[1] -= 0.01; 
-                    break; 
-
-                case 'a': 
-                    sollgeschwindigkeit[0] += 0.005; 
-                    sollgeschwindigkeit[1] -= 0.005; 
-                    break; 
-
-                case 'd': 
-                    sollgeschwindigkeit[0] -= 0.005; 
-                    sollgeschwindigkeit[1] += 0.005; 
+                    sollgeschwindigkeit[0] += 0.01;
+                    sollgeschwindigkeit[1] += 0.01;
                     break;
-
-                case 'b': 
-                    sollgeschwindigkeit = {0.0, 0.0}; 
+                case 's':
+                    sollgeschwindigkeit[0] -= 0.01;
+                    sollgeschwindigkeit[1] -= 0.01;
                     break;
-
-                case 'q': 
-                    sollgeschwindigkeit = {0.0, 0.0}; 
-                    beenden = true; // beednet die erste schleife
-                    break; 
-
-                default: 
+                case 'a': // Linkskurve: rechts schneller, links langsamer.
+                    sollgeschwindigkeit[0] += 0.005;
+                    sollgeschwindigkeit[1] -= 0.005;
+                    break;
+                case 'd':
+                    sollgeschwindigkeit[0] -= 0.005;
+                    sollgeschwindigkeit[1] += 0.005;
+                    break;
+                case 'b': // Anhalten, aber weiter Eingaben annehmen.
+                    sollgeschwindigkeit[0] = 0.0;
+                    sollgeschwindigkeit[1] = 0.0;
+                    break;
+                case 'q': // Anhalten und die erste Schleife verlassen.
+                    sollgeschwindigkeit[0] = 0.0;
+                    sollgeschwindigkeit[1] = 0.0;
+                    beenden = true;
                     break;
             }
         }
 
-
-        for (double& v : sollgeschwindigkeit)
+        // Beide Radgeschwindigkeiten einzeln auf [-0,5; 0,5] begrenzen.
+        for (int i = 0; i < 2; i++)
         {
-            if (v > 0.5) 
+            if (sollgeschwindigkeit[i] > 0.5)
             {
-                v = 0.5; 
+                sollgeschwindigkeit[i] = 0.5;
             }
-            else if (v < -0.5)
+            else if (sollgeschwindigkeit[i] < -0.5)
             {
-                v = -0.5; 
+                sollgeschwindigkeit[i] = -0.5;
             }
-            
         }
 
-         // Auch ohne Tastendruck regelmaessig aufrufen
-        Step();
-
-        mvprintw(2, 0, "Soll rechts: % .3f m/s",
-                 sollgeschwindigkeit[0]);
-
-        mvprintw(3, 0, "Soll links:  % .3f m/s",
-                 sollgeschwindigkeit[1]);
-
-        mvprintw(4, 0, "Letzte Taste: %s",
-                 keyname(letzte_taste));
-
-        // Reste einer vorherigen, laengeren Tastenanzeige loeschen
-        clrtoeol();
+        mvprintw(0, 0, "w/s: vor/zurueck | a/d: lenken | b: Stopp | q: Ende");
+        mvprintw(2, 0, "Soll rechts: % .3f m/s", sollgeschwindigkeit[0]);
+        mvprintw(3, 0, "Soll links:  % .3f m/s", sollgeschwindigkeit[1]);
+        mvprintw(4, 0, "Letzte Taste: %c", letzteTaste);
         refresh();
-        napms(10);
+        napms(10); // Kleine Pause, damit die Schleife nicht unnoetig schnell laeuft.
     }
 
-
+    // Zweite Schleife: Erst beenden, wenn beide Raeder stehen.
+    // In dieser Zwischenaufgabe bleiben die Istwerte noch bei null.
     while (istgeschwindigkeit[0] != 0.0 || istgeschwindigkeit[1] != 0.0)
     {
-        Step(); // rufe die Methode stes auf um die auf die soll Geschwindigkeit zu korrigieren
-        napms(10);  // warte 10 ms 
+        napms(10);
     }
-
-    endwin(); 
-
-
+    endwin(); // ncurses beenden.
 }
 
 void KeyboardControl::Step()
 {
+    // Das Interface kommt erst in der naechsten Aufgabe hinzu.
 }

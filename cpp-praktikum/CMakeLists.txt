@@ -111,3 +111,85 @@ add_executable(tag04_communicate_methode
     tag04/communicate_methode/keyboard_control.cpp
 )
 target_link_libraries(tag04_communicate_methode PRIVATE ncurses)
+target_include_directories(tag04_communicate_methode PRIVATE common)
+
+# Tag 4/5: Rechenklassen und dateibasierte Aufgaben. Diese benoetigen weder
+# die Simulation noch Linux-Echtzeitsignale und koennen separat gebaut werden.
+add_library(sepr_pid_controller tag04/controler/PIDController.cpp)
+target_include_directories(sepr_pid_controller PUBLIC tag04/controler)
+
+add_executable(tag04_pid_controller tag04/controler/main.cpp)
+target_link_libraries(tag04_pid_controller PRIVATE sepr_pid_controller)
+
+add_library(sepr_pos_estimation tag05/positionsschaetzung/pos_estimation.cpp)
+target_include_directories(sepr_pos_estimation PUBLIC tag05/positionsschaetzung)
+
+add_executable(tag05_positionsschaetzung tag05/positionsschaetzung/main.cpp)
+target_link_libraries(tag05_positionsschaetzung PRIVATE sepr_pos_estimation)
+
+add_library(sepr_maneuver tag05/maneuver/maneuver.cpp)
+target_include_directories(sepr_maneuver PUBLIC tag05/maneuver)
+
+add_executable(tag05_koordinatenliste tag05/koordinatenliste/main.cpp)
+target_link_libraries(tag05_koordinatenliste PRIVATE sepr_maneuver)
+
+# InterfaceSIM verwendet SIGRTMIN und POSIX-Timer. Die fertigen Steuerungen
+# sind deshalb fuer die Linux-VM vorgesehen, nicht fuer den macOS-Host.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(SEPR_SIMULATION_DEFAULT ON)
+else()
+    set(SEPR_SIMULATION_DEFAULT OFF)
+endif()
+option(SEPR_BUILD_SIMULATION "Steuerungen fuer die Linux-VM bauen"
+       ${SEPR_SIMULATION_DEFAULT})
+
+if(SEPR_BUILD_SIMULATION)
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        message(FATAL_ERROR "Die Simulationsprogramme bitte in der Linux-VM bauen.")
+    endif()
+
+    find_package(Curses REQUIRED)
+    find_library(SEPR_JSONCPP_LIBRARY NAMES jsoncpp)
+    find_path(SEPR_JSONCPP_INCLUDE_BASE NAMES jsoncpp/json/json.h)
+    find_library(SEPR_RT_LIBRARY NAMES rt)
+    if(NOT SEPR_JSONCPP_LIBRARY OR NOT SEPR_JSONCPP_INCLUDE_BASE OR NOT SEPR_RT_LIBRARY)
+        message(FATAL_ERROR "VM-Bibliotheken jsoncpp (mit Headern) und rt werden benoetigt.")
+    endif()
+
+    # Das schon vorhandene Lehrstuhlmodul wird unveraendert genau einmal
+    # uebersetzt und von allen drei Simulationsprogrammen verwendet.
+    add_library(sepr_sim_interface
+        tag04/interfaces_and_step_methode/InterfaceSIM.cpp
+    )
+    target_include_directories(sepr_sim_interface PUBLIC
+        tag04/interfaces_and_step_methode
+        common
+        ${CURSES_INCLUDE_DIRS}
+        ${SEPR_JSONCPP_INCLUDE_BASE}
+    )
+    target_link_libraries(sepr_sim_interface PUBLIC
+        ${CURSES_LIBRARIES} ${SEPR_RT_LIBRARY} ${SEPR_JSONCPP_LIBRARY}
+    )
+
+    add_executable(tag04_interfaces_and_step_methode
+        tag04/interfaces_and_step_methode/main.cpp
+        tag04/interfaces_and_step_methode/keyboard_control.cpp
+    )
+    target_link_libraries(tag04_interfaces_and_step_methode PRIVATE sepr_sim_interface)
+
+    add_executable(tag04_keyboard_and_controler
+        tag04/keyboard_and_controler/main.cpp
+        tag04/keyboard_and_controler/keyboard_control.cpp
+    )
+    target_link_libraries(tag04_keyboard_and_controler PRIVATE
+        sepr_sim_interface sepr_pid_controller
+    )
+
+    add_executable(tag05_robot_control
+        tag05/robot_control/main.cpp
+        tag05/robot_control/robot_control.cpp
+    )
+    target_link_libraries(tag05_robot_control PRIVATE
+        sepr_sim_interface sepr_pid_controller sepr_pos_estimation sepr_maneuver
+    )
+endif()

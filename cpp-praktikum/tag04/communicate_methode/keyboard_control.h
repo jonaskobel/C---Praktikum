@@ -1,20 +1,18 @@
-#ifndef KEYBOARD_CONTROL_K
-#define KEYBOARD_CONTROL_K
+#ifndef KEYBOARD_CONTROL_H
+#define KEYBOARD_CONTROL_H
 
-#include <array>
 
 class KeyboardControl
 {
 private:
-    std::array<double, 2> sollgeschwindigkeit; // std::array<double, 2> sollgescwindigkeit{}; würde auch gehen. Stellt mehrere methoden zur verfügung wie size(), at()...
-    std::array<double, 2> istgeschwindigkeit; 
+    // Index 0 gehoert zum rechten Motor, Index 1 zum linken Motor.
+    double sollgeschwindigkeit[2];
+    double istgeschwindigkeit[2];
 
-public: 
-    KeyboardControl(); 
-    void Communicate(); 
-    void Step(); 
-}; 
-
-
+public:
+    KeyboardControl();
+    void Communicate();
+    void Step();
+};
 
 #endif

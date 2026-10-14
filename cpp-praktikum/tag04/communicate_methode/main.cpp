@@ -2,7 +2,7 @@
 
 int main()
 {
-    KeyboardControl control; 
-
-    control.Communicate(); 
+    KeyboardControl control;
+    control.Communicate();
+    return 0;
 }

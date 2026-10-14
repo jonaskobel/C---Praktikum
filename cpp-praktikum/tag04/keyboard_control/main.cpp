@@ -2,8 +2,8 @@
 
 int main()
 {
-    KeyboardControl control; 
-
-    control.Communicate(); 
-    control.Step(); 
+    KeyboardControl control;
+    control.Communicate();
+    control.Step();
+    return 0;
 }
