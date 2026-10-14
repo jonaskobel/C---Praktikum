@@ -75,6 +75,10 @@ add_executable(tag02_virtuelle_methoden
     tag02/virtuelle_methode/main.cpp 
 )   
 
+add_executable(tag02_polymorphie
+    tag02/polymorphie/main.cpp
+)
+
 add_executable(tag03_rekursion
     tag03/Rekursion/main.cpp
 )
