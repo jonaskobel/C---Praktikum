@@ -1,0 +1,76 @@
+#include "maneuver.h"
+#include <cmath>
+#include <fstream>
+
+
+Maneuver::Maneuver()
+{
+	// struct Coord{double dX, double dY, double dV} ist nur ein Datentyp und muss nicht initialisiert werden ähnlich int oder double
+	// std::list<Coord> CoordList; list besitut einen Standard Construktor und muss nicht initialisiert werden
+	blsRunning = false;
+	adWishSpeed[0] = 0.0;
+	adWishSpeed[1] = 0.0;
+	dMaxSpeed = 0.5;
+	dPosDifference = 0.02;
+
+	iter = CoordList.end(); // Ein Iterator ist ein Objekt und muss initialisiert werden er zeigt entweder auf den Anfang oder das ende der Liste
+}
+
+void Maneuver::CalcCircle(double dRadius, double dSpeed, double dTimestep)
+{
+	CoordList.clear();
+	blsRunning = false;
+
+	for (int counter = 1;
+		counter < (int)((2*M_PI) / ((dSpeed / dRadius) * dTimestep)); // berechnet die Länge der Liste
+		counter++)
+	{
+		double dX = dRadius * sin(counter * (dSpeed/dRadius)*dTimestep);
+		double dY = dRadius * (1- cos(counter * (dSpeed/dRadius) * dTimestep));
+
+		CoordList.push_back({dX, dY, dSpeed});
+	}
+
+	iter = CoordList.begin();
+}
+
+
+void Maneuver::CalcEight(double dRadius, double dSpeed, double dTimestep)
+{
+	CoordList.clear();
+	blsRunning = false;
+
+	for (int counter = 1;
+		counter < (int)((2*M_PI) / ((dSpeed / dRadius) * dTimestep)); // berechnet die Länge der Liste
+		counter++)
+	{
+		double dX = dRadius * sin(counter * (dSpeed / dRadius) * dTimestep);
+		double dY = dRadius * (1 - cos(counter * (dSpeed/dRadius) * dTimestep));
+
+		CoordList.push_back({dX, dY, dSpeed});
+	}
+
+	for (int counter = 1;
+		counter < counter < (int)((2*M_PI) / ((dSpeed / dRadius) * dTimestep));
+		counter++)
+	{
+		double dX = dRadius * sin(counter *(dSpeed/dRadius)*dTimestep);
+		double dY = -dRadius *(1 - cos(counter * (dSpeed/dRadius)/dTimestep));
+
+		CoordList.push_back({dX, dY, dSpeed});
+	}
+
+	iter = CoordList.begin();
+}
+
+void Maneuver::LogList(std::string sDatei)
+{
+
+}
+
+
+
+
+
+
+

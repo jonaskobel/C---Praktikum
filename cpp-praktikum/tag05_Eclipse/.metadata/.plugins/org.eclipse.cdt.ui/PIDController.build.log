@@ -1,0 +1,15 @@
+14:41:46 **** Incremental Build of configuration Debug for project PIDController ****
+make all 
+Building file: ../src/main.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.cpp"
+Finished building: ../src/main.cpp
+ 
+Building target: PIDController
+Invoking: GCC C++ Linker
+g++  -o "PIDController"  ./src/PIDController.o ./src/main.o   
+Finished building target: PIDController
+ 
+
+14:41:48 Build Finished. 0 errors, 0 warnings. (took 2s.78ms)
+

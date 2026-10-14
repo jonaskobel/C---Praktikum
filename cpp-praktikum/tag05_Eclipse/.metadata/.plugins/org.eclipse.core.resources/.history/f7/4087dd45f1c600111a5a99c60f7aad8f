@@ -1,0 +1,24 @@
+#include "PIDController.h"
+#include <iostream>
+#include <fstream>
+
+int main()
+{
+	PIDController controller(1000, 10, 0.1 , 0.5);
+
+	std::fstream file;
+
+	file.open("../PIDControllerInput.txt");
+
+	if (!file.is_open())
+	{
+		std::cout << "unable to open PIDControllerInput.txt.";
+		return 1;
+	}
+
+	double sollwerte;
+	double istwerte;
+
+
+
+}

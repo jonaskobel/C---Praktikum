@@ -1,0 +1,10 @@
+19:12:50 **** Incremental Build of configuration Debug for project RobotControl ****
+make all 
+Building target: RobotControl
+Invoking: GCC C++ Linker
+g++  -o "RobotControl"  ./src/InterfaceSIM.o ./src/PIDController.o ./src/PositionEstimation.o ./src/RobotControl.o ./src/main.o ./src/maneuver.o   -ljsoncpp -lrt -lncurses
+Finished building target: RobotControl
+ 
+
+19:12:52 Build Finished. 0 errors, 0 warnings. (took 2s.35ms)
+

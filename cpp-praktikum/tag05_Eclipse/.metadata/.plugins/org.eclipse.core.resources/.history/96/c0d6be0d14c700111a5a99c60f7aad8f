@@ -1,0 +1,14 @@
+#ifndef MANEUVER_M
+#define MANEUVER_M
+
+#include <list>
+#include <string>
+
+class Maneuver
+{
+	struct Coord{double dX, double dY, double dV};
+	std::list<Coord> CoordList;
+};
+
+
+#endif

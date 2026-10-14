@@ -1,0 +1,23 @@
+//============================================================================
+// Name        : PositionEstimation.cpp
+// Author      : 
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+#include "PositionEstimation.h"
+#include <cmath>
+
+
+PosEstimation::PosEstimation()
+{
+	x = {0.0, 0.0, 0.0};
+	dVelAverage = 0.0;
+}
+
+void PosEstimation::PredictPosition(double dSpeedR, double dSpeedL, double dTimestep)
+{
+
+}

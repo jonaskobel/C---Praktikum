@@ -1,0 +1,20 @@
+#ifndef POSITION_ESTIMATION_P
+#define POSITION_ESTIMATION_P
+
+
+class PosEstimation
+{
+private:
+	double x[3];
+	double dVelAverage;
+
+public:
+	PosEstimation();
+
+	void Reset();
+	void PredictPosition(double dSpeedR, double dSpeedL, double dTimestep);
+	double* GetPosition(); // liefert nur die Adresse des Ergebnisarrays x3 zurück, keine kopie
+
+};
+
+#endif

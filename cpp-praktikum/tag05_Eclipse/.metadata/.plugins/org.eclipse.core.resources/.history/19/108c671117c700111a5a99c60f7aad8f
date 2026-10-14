@@ -1,0 +1,14 @@
+#include "maneuver.h"
+
+
+Maneuver::Maneuver()
+{
+
+	blsRunning = false;
+	adWishSpeed[0] = 0.0;
+	adWishSpeed[1] = 0.0;
+	dMaxSpeed = 0.5;
+	dPosDifference = 0.02;
+
+	iter = CoordList.end();
+}

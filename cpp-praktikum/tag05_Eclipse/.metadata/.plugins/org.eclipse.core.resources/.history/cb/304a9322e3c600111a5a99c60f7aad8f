@@ -1,0 +1,31 @@
+#ifndef KEYBOARD_CONTROL_K
+#define KEYBOARD_CONTROL_K
+
+#include "InterfaceSIM.h"
+
+#include <array>
+#include <csignal>
+
+
+class KeyboardControl
+{
+private:
+
+	InterfaceSIM interface;
+
+    std::array<double, 2> sollgeschwindigkeit; // std::array<double, 2> sollgescwindigkeit{}; würde auch gehen. Stellt mehrere methoden zur verfügung wie size(), at()...
+    std::array<double, 2> istgeschwindigkeit; 
+    std::array<int, 2> iMicros;
+
+public: 
+    KeyboardControl(); 
+    void Communicate(); 
+    void Step(); 
+
+    static KeyboardControl* transferPointer;
+    static void transferFunction();
+}; 
+
+
+
+#endif

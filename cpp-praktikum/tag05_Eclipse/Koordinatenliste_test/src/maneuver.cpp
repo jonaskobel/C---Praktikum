@@ -1,0 +1,187 @@
+
+#include "maneuver.h"
+#include <cmath>
+#include <fstream>
+
+Maneuver::Maneuver()
+{
+    blsRunning = false;
+    adWishSpeed[0] = 0.0;
+    adWishSpeed[1] = 0.0;
+    dMaxSpeed = 0.5;
+    dPosDifference = 0.02;
+
+    iter = CoordList.end();
+}
+
+
+void Maneuver::CalcCircle(double dRadius, double dSpeed, double dTimestep)
+{
+    CoordList.clear();
+    blsRunning = false;
+
+    for (int counter = 1;
+         counter < (int)((2 * M_PI) / ((dSpeed / dRadius) * dTimestep));
+         counter++)
+    {
+        double dX = dRadius * sin(counter * (dSpeed / dRadius) * dTimestep);
+        double dY = dRadius * (1 - cos(counter * (dSpeed / dRadius) * dTimestep));
+
+        CoordList.push_back({dX, dY, dSpeed});
+    }
+
+    iter = CoordList.begin();
+}
+
+
+void Maneuver::CalcEight(double dRadius, double dSpeed, double dTimestep)
+{
+    CoordList.clear();
+    blsRunnning = false;
+
+    // Erster Teilkreis
+    for (int counter = 1;
+         counter < (int)((2 * M_PI) / ((dSpeed / dRadius) * dTimestep));
+         counter++)
+    {
+        double dX = dRadius * sin(counter * (dSpeed / dRadius) * dTimestep);
+        double dY = dRadius * (1 - cos(counter * (dSpeed / dRadius) * dTimestep));
+
+        CoordList.push_back({dX, dY, dSpeed});
+    }
+
+
+    for (int counter = 1;
+         counter < (int)((2 * M_PI) / ((dSpeed / dRadius) * dTimestep));
+         counter++)
+    {
+        double dX = dRadius * sin(counter * (dSpeed / dRadius) * dTimestep);
+        double dY = -dRadius * (1 - cos(counter * (dSpeed / dRadius) * dTimestep));
+
+        CoordList.push_back({dX, dY, dSpeed});
+    }
+
+    iter = CoordList.begin();
+}
+
+
+void Maneuver::LogList(std::string sDatei)
+{
+    std::ofstream file(sDatei);
+
+    for (const Coord& punkt : CoordList)
+    {
+        file << punkt.dX << "\t" << punkt.dY << "\n";
+    }
+
+    file.close();
+}
+
+
+bool Maneuver::isRunning()
+{
+    return blsRunning;
+}
+
+
+void Maneuver::Start()
+{
+    iter = CoordList.begin();
+    blsRunning = !CoordList.empty();
+}
+
+
+void Maneuver::Stop()
+{
+    blsRunning = false;
+    adWishSpeed[0] = 0.0;
+    adWishSpeed[1] = 0.0;
+}
+
+
+void Maneuver::Proceed()
+{
+    if (iter != CoordList.end())
+    {
+        blsRunning = true;
+    }
+}
+
+
+void Maneuver::CalcManeuverSpeed(double dX, double dY, double dW)
+{
+    if (!blsRunning)
+    {
+        adWishSpeed[0] = 0.0;
+        adWishSpeed[1] = 0.0;
+        return;
+    }
+
+    if (iter != CoordList.end())
+    {
+        double dDeltaX = iter->dX - dX;
+        double dDeltaY = iter->dY - dY;
+
+        double dDistance = sqrt(dDeltaX * dDeltaX + dDeltaY * dDeltaY);
+
+        if (dDistance <= dPosDifference)
+        {
+            iter++;
+        }
+    }
+
+    if (iter == CoordList.end())
+    {
+        Stop();
+        return;
+    }
+
+    double dPhi = atan2(iter->dY - dY, iter->dX - dX);
+
+
+    double dDeltaPhi = dPhi - dW;
+
+
+    dDeltaPhi = fmod(dDeltaPhi, 2 * M_PI);
+
+    if (dDeltaPhi > M_PI)
+    {
+        dDeltaPhi -= 2 * M_PI;
+    }
+    else if (dDeltaPhi <= -M_PI)
+    {
+        dDeltaPhi += 2 * M_PI;
+    }
+
+    double dRot = 2.0 * dDeltaPhi;
+
+    if (dRot > dMaxSpeed)
+    {
+        dRot = dMaxSpeed;
+    }
+    else if (dRot < -dMaxSpeed)
+    {
+        dRot = -dMaxSpeed;
+    }
+
+    double dTra = iter->dV;
+
+    if (dTra > dMaxSpeed - fabs(dRot))
+    {
+        dTra = dMaxSpeed - fabs(dRot);
+    }
+    else if (dTra < -dMaxSpeed + fabs(dRot))
+    {
+        dTra = -dMaxSpeed + fabs(dRot);
+    }
+
+
+    adWishSpeed[0] = dTra + dRot; // rechts
+    adWishSpeed[1] = dTra - dRot; // links
+}
+
+
+double* Maneuver::GetManeuverSpeed()
+{
+    return adWishSpeed;
+}

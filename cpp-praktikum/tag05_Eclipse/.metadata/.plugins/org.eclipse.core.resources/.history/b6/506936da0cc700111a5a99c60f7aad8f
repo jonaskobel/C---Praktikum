@@ -1,0 +1,53 @@
+//============================================================================
+// Name        : PositionEstimation.cpp
+// Author      : 
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+#include "PositionEstimation.h"
+#include <cmath>
+
+
+PosEstimation::PosEstimation()
+{
+	x = {0.0, 0.0, 0.0}; // initialisieren auf 0.0, 0.0, 0.0
+	dVelAverage = 0.0;
+}
+
+void PosEstimation::PredictPosition(double dSpeedR, double dSpeedL, double dTimestep)
+{
+	double spurbreite = 0.23;
+
+	x[0] = x[0] + dVelAverage * dTimestep * cos(x[2]); // Berechnung x_k
+	x[1] = x[1] + dVelAverage * dTimestep * sin(x[2]); // Berechnung y_k
+	x[2] = x[2] + dTimestep * (dSpeedR - dSpeedL)/(spurbreite); // Berechnung der Yaw Rate
+
+	// Winkel auf [-pi; pi] begrenzen
+	x[2] = fmod(x[2], 2.0 * M_PI);
+	if (x[2] > M_PI)
+	{
+		x[2] = x[2] -2.0 * M_PI;
+	}
+	else if (x[2] <= -M_PI)
+	{
+		x[2] = x[2] +2.0 * M_PI;
+	}
+
+	dVelAverage = (dSpeedR + dSpeedL) / 2.0;
+
+}
+
+
+double* PosEstimation::GetPosition()
+{
+	return *x;
+}
+
+
+void PosEstimation::Reset()
+{
+	x = {0.0, 0.0, 0.0};
+}

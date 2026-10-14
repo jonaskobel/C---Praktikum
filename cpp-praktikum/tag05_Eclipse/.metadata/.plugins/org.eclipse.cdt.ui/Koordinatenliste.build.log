@@ -1,0 +1,28 @@
+18:08:18 **** Incremental Build of configuration Debug for project Koordinatenliste ****
+make all 
+Building file: ../src/main.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.cpp"
+Finished building: ../src/main.cpp
+ 
+Building file: ../src/maneuver2.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/maneuver2.d" -MT"src/maneuver2.o" -o "src/maneuver2.o" "../src/maneuver2.cpp"
+../src/maneuver2.cpp: In member function ‘void Maneuver::CalcEight(double, double, double)’:
+../src/maneuver2.cpp:54:11: warning: self-comparison always evaluates to false [-Wtautological-compare]
+   counter < counter < (int)((2*M_PI) / ((dSpeed / dRadius) * dTimestep));
+   ~~~~~~~~^~~~~~~~~
+../src/maneuver2.cpp:54:11: warning: comparisons like ‘X<=Y<=Z’ do not have their mathematical meaning [-Wparentheses]
+Finished building: ../src/maneuver2.cpp
+ 
+Building target: Koordinatenliste
+Invoking: GCC C++ Linker
+g++  -o "Koordinatenliste"  ./src/main.o ./src/maneuver2.o   
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/8/../../../x86_64-linux-gnu/Scrt1.o: in function `_start':
+(.text+0x20): undefined reference to `main'
+collect2: error: ld returned 1 exit status
+make: *** [makefile:47: Koordinatenliste] Fehler 1
+"make all" terminated with exit code 2. Build might be incomplete.
+
+18:08:21 Build Failed. 3 errors, 2 warnings. (took 2s.660ms)
+

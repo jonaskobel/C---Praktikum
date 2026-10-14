@@ -1,0 +1,45 @@
+//============================================================================
+// Name        : PIDController.cpp
+// Author      : 
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+#include "PIDController.h"
+#include <iostream>
+
+
+PIDController::PIDController(double Kp, double Ki, double Kd, double Ta)
+{
+	dKp = Kp;
+	dKi = Ki;
+	dKd = Kd;
+	dTa = Ta;
+	dEsum = 0.0;
+	deold = 0.0;
+	dU = 0.0;
+
+}
+
+void PIDController::CalculateU(double W, double Y)
+{
+	// Regelabweichung
+	double ek = W - Y; // W(y_soll) - Y(y_mess)
+
+	// Summe der Regelabweichung
+	dEsum = dEsum  + e;
+
+	// PID Regler
+	dU = dKp*ek + dKi*dTa*dEsum + dKd*(ek-deold)/dTa;
+
+	// Aktuelle Regelabweichung für nächsten Schritt speichern
+	deold = ek;
+}
+
+double PIDController::GetU()
+{
+	return dU;
+}
+
+
+

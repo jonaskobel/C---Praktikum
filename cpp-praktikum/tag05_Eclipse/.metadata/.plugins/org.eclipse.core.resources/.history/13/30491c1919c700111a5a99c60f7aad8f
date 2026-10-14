@@ -1,0 +1,40 @@
+#ifndef MANEUVER_M
+#define MANEUVER_M
+
+#include <list>
+#include <string>
+
+class Maneuver
+{
+private:
+	struct Coord{
+		double dX;
+		double dY;
+		double dV;}
+	;
+
+	std::list<Coord> CoordList;
+	std::list<Coord>::iterator iter;
+
+	bool blsRunning;
+	double adWishSpeed[2];
+	double dMaxSpeed;
+	double dPosDifference;
+
+public:
+	Maneuver();
+
+	void CalcCircle(double dRadius, double dSpeed, double dTimestep);
+	void CalcEight(double Radius, double dSpeed, double DTimestep);
+	void LogList(std::string sDatei);
+	bool isRunning();
+	void Start();
+	void Stop();
+	void Proceed();
+	void CalcManeuverSpeed(double dX, double dY, double dW);
+	double* GetManeuverSpeed();
+
+};
+
+
+#endif

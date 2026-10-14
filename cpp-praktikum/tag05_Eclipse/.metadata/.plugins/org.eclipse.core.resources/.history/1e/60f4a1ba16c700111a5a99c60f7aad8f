@@ -1,0 +1,8 @@
+#include "maneuver.h"
+
+
+Maneuver::Maneuver()
+{
+	// std::list<Coord> CoordList; ist nur ein Datentyp und muss nicht initialisiert werden
+
+}

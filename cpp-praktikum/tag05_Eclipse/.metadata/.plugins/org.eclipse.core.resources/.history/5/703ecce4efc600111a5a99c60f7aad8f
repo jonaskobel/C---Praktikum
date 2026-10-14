@@ -1,0 +1,8 @@
+#include "PIDContoller.h"
+#include <iostream>
+
+int main()
+{
+	PIDController controller(1000, 10, 0.1 , 0.5);
+
+}

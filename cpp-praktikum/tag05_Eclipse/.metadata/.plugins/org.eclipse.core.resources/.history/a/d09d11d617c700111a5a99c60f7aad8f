@@ -1,0 +1,15 @@
+#include "maneuver.h"
+
+
+Maneuver::Maneuver()
+{
+	// std::list<Coord> CoordLis eine Liste muss nicht initialisiert werden
+	blsRunning = false;
+	adWishSpeed[0] = 0.0;
+	adWishSpeed[1] = 0.0;
+	dMaxSpeed = 0.5;
+	dPosDifference = 0.02;
+
+	iter = CoordList.end(); // Ein Iterator ist ein Objekt und muss initialisiert werden er zeigt entweder auf den Anfang oder das ende der Liste
+}
+

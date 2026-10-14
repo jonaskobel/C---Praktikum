@@ -1,0 +1,161 @@
+#include "keyboard_control.h"
+#include <iostream>
+#include <ncurses.h>
+#include <array>
+
+KeyboardControl::KeyboardControl()
+{
+    sollgeschwindigkeit = {0.0, 0.0}; 
+    istgeschwindigkeit = {0.0, 0.0}; 
+
+    iMicros[0] = 1500;
+    iMicros[1] = 1500;
+
+    transferPointer = this; // damit zeigt die Klasse auf sich selber
+
+    interfaceSIM.Initialize(0.04, &KeyboardControl::transferFunction);
+}
+
+void KeyboardControl::Communicate()
+{
+
+    initscr(); 
+    cbreak(); 
+    noecho(); 
+    nodelay(stdscr, true); 
+
+    printw("w/s: vor/zurueck | a/d: lenken | b: Stopp | q: Ende\n"); 
+    refresh(); 
+
+    bool beenden = false; 
+    int letzte_taste = '-'; 
+
+    sigprocmask(SIG_UNBLOCK, &interfaceSIM.mask, nullptr);
+
+    while (!beenden) {
+
+        // getch liest einen Tastendruck, da davor nodelay(stdscr, true) gesetzt ist wartet die Funtkion nicht
+        int eingabe = getch(); 
+
+        // Taste gedrückt -> getch() liefert einen Tastencode 
+        // Taste nicht gerückt -> liefert ERR 
+        if (eingabe != ERR)
+        {
+            letzte_taste = eingabe; 
+
+            switch (eingabe)
+            {
+                // erhöhe die Vorwärtsgeschwindigkeit um 0.01
+                case 'w':
+                    sollgeschwindigkeit[0] += 0.01; // rechter motor
+                    sollgeschwindigkeit[1] += 0.01; // linker motor
+                    break; 
+
+                case 's': 
+                    sollgeschwindigkeit[0] -= 0.01;
+                    sollgeschwindigkeit[1] -= 0.01;
+                    break; 
+
+                case 'a': 
+                    sollgeschwindigkeit[0] += 0.005; 
+                    sollgeschwindigkeit[1] -= 0.005; 
+                    break; 
+
+                case 'd': 
+                    sollgeschwindigkeit[0] -= 0.005; 
+                    sollgeschwindigkeit[1] += 0.005; 
+                    break;
+
+                case 'b': 
+                    sollgeschwindigkeit = {0.0, 0.0}; 
+                    break;
+
+                case 'q': 
+                    sollgeschwindigkeit = {0.0, 0.0}; 
+                    beenden = true; // beednet die erste schleife
+                    break; 
+
+                default: 
+                    break;
+            }
+        }
+
+
+        for (double& v : sollgeschwindigkeit)
+        {
+            if (v > 0.5) 
+            {
+                v = 0.5; 
+            }
+            else if (v < -0.5)
+            {
+                v = -0.5; 
+            }
+            
+        }
+
+         // Auch ohne Tastendruck regelmaessig aufrufen
+        sigprocmask(SIG_UNBLOCK, &interfaceSIM.mask, nullptr);
+
+        mvprintw(2, 0, "Soll rechts: % .3f m/s",
+                 sollgeschwindigkeit[0]);
+
+        mvprintw(3, 0, "Soll links:  % .3f m/s",
+                 sollgeschwindigkeit[1]);
+
+        mvprintw(4, 0, "Letzte Taste: %s",
+                 keyname(letzte_taste));
+
+        // Reste einer vorherigen, laengeren Tastenanzeige loeschen
+        clrtoeol();
+        refresh();
+        napms(10);
+    }
+
+
+    while (istgeschwindigkeit[0] != 0.0 || istgeschwindigkeit[1] != 0.0)
+    {
+        napms(10);  // warte 10 ms 
+    }
+
+    sigprocmask(SIG_UNBLOCK, &interfaceSIM.mask, nullptr);
+
+    endwin(); 
+
+
+}
+
+void KeyboardControl::Step()
+{
+	double* pdInput = interfaceSIM.GetInput();
+
+	istgeschwindigkeit[0] = pdInput[0];
+	istgeschwindigkeit[1] = pdInput[1];
+
+	iMicros[0] = static_cast<int>(1500 + 1000 * sollgeschwindigkeit[0]);
+	iMicros[1] = static_cast<int>(1500 + 1000 * sollgeschwindigkeit[1]);
+
+	for (int i = 0;  i < 2; ++i)
+	{
+		if (iMicros[i] < 1000)
+		{
+			iMicros[i] = 1000;
+		}
+		else if (iMicros[i] > 2000)
+		{
+			iMicros[i] = 2000;
+		}
+	}
+
+	interfaceSIM.SetOutputs(iMicros);
+
+}
+
+KeyboardControl* KeyboardControl::transferPointer = nullptr;
+
+void KeyboardControl::transferFunction()
+{
+	transferPointer->Step();
+}
+
+

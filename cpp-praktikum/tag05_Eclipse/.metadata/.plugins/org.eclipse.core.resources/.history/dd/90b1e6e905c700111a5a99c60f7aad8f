@@ -1,0 +1,19 @@
+#ifndef POSITION_ESTIMATION_P
+#define POSITION_ESTIMATION_P
+
+class PosEstimation
+{
+private:
+	double x3;
+	double dVelAverage;
+
+public:
+	PosEstimation();
+
+	void Reset();
+	void PredictPosition(double dSpeedR, double dSpeedL, double dTimestep);
+	double GetPosition();
+
+};
+
+#endif
